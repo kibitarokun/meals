@@ -9,6 +9,7 @@ import { Ionicons } from '@expo/vector-icons';
 import MonthScreen from './screens/MonthScreen';
 import WeekScreen from './screens/WeekScreen';
 import DayScreen from './screens/DayScreen';
+import AIScreen from './screens/AIScreen';
 import { getApiKey, saveApiKey } from './config/api';
 
 const Tab = createBottomTabNavigator();
@@ -110,6 +111,16 @@ function TabNavigator() {
           title: 'カレンダー',
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="calendar" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen 
+        name="AI" 
+        component={AIScreen}
+        options={{ 
+          title: 'AIアシスタント',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="sparkles" size={size} color={color} />
           ),
         }}
       />

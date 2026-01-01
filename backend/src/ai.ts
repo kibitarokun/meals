@@ -33,12 +33,16 @@ async function getRecentSummary(env: Env): Promise<string> {
   
   const mealList = meals.map(m => m.menu_name).join('、');
   
-  const prompt = `以下は過去2週間の献立リストです：${mealList}。この献立の傾向を簡潔に要約してください。`;
+  const prompt = `以下は過去2週間の献立リストです：${mealList}。
+
+この献立の傾向を3～4文で簡潔に日本語で要約してください。
+栄養バランスや料理のジャンルに注目して分析してください。
+必ず日本語で回答すること。`;
   
   try {
     const response = await env.AI.run('@cf/meta/llama-3-8b-instruct', {
       messages: [
-        { role: 'system', content: 'あなたは家庭の献立アドバイザーです。簡潔で親しみやすい日本語で回答してください。' },
+        { role: 'system', content: 'You are a Japanese meal planning advisor. Always respond in Japanese language only. Be concise and friendly. あなたは日本語の献立アドバイザーです。必ず日本語のみで回答してください。' },
         { role: 'user', content: prompt }
       ]
     });
@@ -53,12 +57,17 @@ async function getSuggestions(env: Env): Promise<string> {
   const meals = await getMeals(env, 14);
   const recentMeals = meals.map(m => m.menu_name).join('、');
   
-  const prompt = `以下の献立と被らない、冬の夕飯にふさわしい献立を3つ提案してください：${recentMeals || 'まだ献立がありません'}`;
+  const prompt = `最近の献立：${recentMeals || 'まだ献立がありません'}
+
+上記と被らない、冬の夕飯にふさわしい献立を3つ提案してください。
+各献立には簡単な説明を付けてください。
+番号付きリスト形式で日本語で回答してください。
+必ず日本語で回答すること。`;
   
   try {
     const response = await env.AI.run('@cf/meta/llama-3-8b-instruct', {
       messages: [
-        { role: 'system', content: 'あなたは家庭の献立アドバイザーです。季節感があり、栄養バランスの良い献立を提案してください。' },
+        { role: 'system', content: 'You are a Japanese meal planning advisor. Always respond in Japanese language only. Suggest seasonal and nutritious meals. あなたは日本語の献立アドバイザーです。必ず日本語のみで回答してください。' },
         { role: 'user', content: prompt }
       ]
     });
