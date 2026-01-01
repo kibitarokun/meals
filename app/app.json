@@ -1,0 +1,20 @@
+{
+  "expo": {
+    "name": "み〜るず",
+    "slug": "meals",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "backgroundColor": "#FFF8F0"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.family.meals"
+    },
+    "android": {
+      "package": "com.family.meals"
+    },
+    "main": "App.tsx"
+  }
+}

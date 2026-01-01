@@ -1,0 +1,17 @@
+name = "meals-backend"
+main = "src/index.ts"
+compatibility_date = "2023-12-18"
+
+[[ d1_databases ]]
+binding = "DB"
+database_name = "meals-db"
+database_id = "b5b995f2-cc85-430d-b74b-5e293feaec29"
+
+[ai]
+binding = "AI"
+
+[vars]
+ENVIRONMENT = "development"
+
+# Secret variables (use: wrangler secret put FAMILY_SECRET)
+# FAMILY_SECRET = "your-family-secret-key"
