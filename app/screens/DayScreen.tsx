@@ -24,9 +24,8 @@ interface CommentsResponse {
 }
 
 const QUICK_COMMENTS = [
-  '楽しみ！',
   'ごちそうさま！',
-  '美味しそう✨',
+  '美味しかったよ✨',
   'いいね👍',
 ];
 
@@ -360,7 +359,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#333',
     marginBottom: 12,
-    width: '100%',
   },
   dateDisplay: {
     fontSize: 20,
