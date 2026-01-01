@@ -11,10 +11,10 @@ import {
 import { useNavigation, useIsFocused } from '@react-navigation/native';
 import type { NavigationProp } from '@react-navigation/native';
 import { createApiClient } from '../config/api';
-import type { Meal } from '../types';
+import type { Meal, MealType } from '../types';
 
 type RootStackParamList = {
-  '日': { date: string };
+  '日': { date: string; mealType: MealType };
   '週': undefined;
   '月': undefined;
 };
@@ -65,6 +65,15 @@ export default function WeekScreen() {
     return `${month}/${day}(${weekday})`;
   };
 
+  const getMealTypeLabel = (mealType: MealType) => {
+    const labels = {
+      breakfast: '🌅朝食',
+      lunch: '☀️昼食',
+      dinner: '🌙夕食'
+    };
+    return labels[mealType] || '';
+  };
+
   if (loading) {
     return (
       <View style={styles.centerContainer}>
@@ -84,20 +93,23 @@ export default function WeekScreen() {
         </TouchableOpacity>
       </View>
       
-      <ScrollView style={styles.scrollView}>
+      <ScrollView 
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollViewContent}
+      >
         {meals.length === 0 ? (
           <View style={styles.emptyContainer}>
             <Text style={styles.emptyText}>まだ献立がありません</Text>
-            <Text style={styles.emptySubText}>「日」タブから追加してください</Text>
+            <Text style={styles.emptySubText}>カレンダーから日付を選択して追加してください</Text>
           </View>
         ) : (
           meals.map((meal) => (
             <TouchableOpacity 
-              key={meal.meal_date} 
+              key={`${meal.meal_date}-${meal.meal_type}`}
               style={styles.card}
-              onPress={() => navigation.navigate('日', { date: meal.meal_date })}
+              onPress={() => navigation.navigate('日', { date: meal.meal_date, mealType: meal.meal_type })}
             >
-              <Text style={styles.dateText}>{formatDate(meal.meal_date)}</Text>
+              <Text style={styles.dateText}>{formatDate(meal.meal_date)} {getMealTypeLabel(meal.meal_type)}</Text>
               <Text style={styles.menuText}>{meal.menu_name}</Text>
               {meal.latest_comment && (
                 <View style={styles.commentContainer}>
@@ -144,20 +156,30 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     flex: 1,
+  },
+  scrollViewContent: {
     padding: 16,
+    paddingBottom: 40,
   },
   emptyContainer: {
     alignItems: 'center',
     marginTop: 100,
+    paddingHorizontal: 20,
+    width: '100%',
   },
   emptyText: {
     fontSize: 20,
     color: '#999',
     marginBottom: 8,
+    textAlign: 'center',
+    width: '100%',
   },
   emptySubText: {
     fontSize: 16,
     color: '#CCC',
+    textAlign: 'center',
+    paddingHorizontal: 10,
+    width: '100%',
   },
   card: {
     backgroundColor: '#FFFFFF',

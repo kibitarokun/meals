@@ -5,7 +5,7 @@ compatibility_date = "2023-12-18"
 [[ d1_databases ]]
 binding = "DB"
 database_name = "meals-db"
-database_id = "b5b995f2-cc85-430d-b74b-5e293feaec29"
+database_id = "84cd3925-5c17-49f3-a511-606704ea29ac"
 
 [ai]
 binding = "AI"

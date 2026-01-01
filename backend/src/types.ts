@@ -4,8 +4,11 @@ export interface Env {
   FAMILY_SECRET: string;
 }
 
+export type MealType = 'breakfast' | 'lunch' | 'dinner';
+
 export interface Meal {
   meal_date: string;
+  meal_type: MealType;
   menu_name: string;
   memo?: string;
   image_url?: string;
@@ -15,6 +18,7 @@ export interface Meal {
 export interface Comment {
   id: number;
   meal_date: string;
+  meal_type: MealType;
   comment_text: string;
   created_at: string;
 }

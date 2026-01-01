@@ -50,7 +50,7 @@ export default function App() {
     return (
       <View style={styles.container}>
         <StatusBar style="auto" />
-        <Text style={styles.title}>うちの晩ごはん</Text>
+        <Text style={styles.title}>ミールみーる</Text>
         <Text style={styles.subtitle}>家族の秘密鍵を入力してください</Text>
         <TextInput
           style={styles.input}
@@ -140,11 +140,15 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: 'bold',
     marginBottom: 10,
+    textAlign: 'center',
+    width: '100%',
   },
   subtitle: {
     fontSize: 16,
     color: '#666',
     marginBottom: 30,
+    textAlign: 'center',
+    width: '100%',
   },
   input: {
     width: '100%',

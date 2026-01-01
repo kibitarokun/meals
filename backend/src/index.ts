@@ -42,10 +42,11 @@ export default {
         
         if (request.method === 'DELETE') {
           const date = url.searchParams.get('date');
-          if (!date) {
-            return errorResponse('日付パラメータが必要です', 400, origin);
+          const mealType = url.searchParams.get('meal_type') as any;
+          if (!date || !mealType) {
+            return errorResponse('dateとmeal_typeパラメータが必要です', 400, origin);
           }
-          await deleteMeal(env, date);
+          await deleteMeal(env, date, mealType);
           return jsonResponse({ success: true, message: '献立を削除しました' }, 200, origin);
         }
       }
@@ -53,19 +54,20 @@ export default {
       if (url.pathname === '/comments') {
         if (request.method === 'GET') {
           const date = url.searchParams.get('date');
-          if (!date) {
-            return errorResponse('日付パラメータが必要です', 400, origin);
+          const mealType = url.searchParams.get('meal_type') as any;
+          if (!date || !mealType) {
+            return errorResponse('dateとmeal_typeパラメータが必要です', 400, origin);
           }
-          const comments = await getComments(env, date);
+          const comments = await getComments(env, date, mealType);
           return jsonResponse({ comments }, 200, origin);
         }
         
         if (request.method === 'POST') {
-          const { meal_date, comment_text } = await request.json() as { meal_date: string; comment_text: string };
-          if (!meal_date || !comment_text) {
-            return errorResponse('meal_dateとcomment_textが必要です', 400, origin);
+          const { meal_date, meal_type, comment_text } = await request.json() as { meal_date: string; meal_type: any; comment_text: string };
+          if (!meal_date || !meal_type || !comment_text) {
+            return errorResponse('meal_date、meal_type、comment_textが必要です', 400, origin);
           }
-          await saveComment(env, meal_date, comment_text);
+          await saveComment(env, meal_date, meal_type, comment_text);
           return jsonResponse({ success: true, message: 'コメントを投稿しました' }, 200, origin);
         }
       }

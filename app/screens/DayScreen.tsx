@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { createApiClient } from '../config/api';
-import type { Meal, Comment } from '../types';
+import type { Meal, Comment, MealType } from '../types';
 
 interface MealsResponse {
   meals?: Meal[];
@@ -30,13 +30,22 @@ const QUICK_COMMENTS = [
   'いいね👍',
 ];
 
+const MEAL_TYPES: { value: MealType; label: string; emoji: string }[] = [
+  { value: 'breakfast', label: '朝食', emoji: '🌅' },
+  { value: 'lunch', label: '昼食', emoji: '☀️' },
+  { value: 'dinner', label: '夕食', emoji: '🌙' },
+];
+
 export default function DayScreen() {
   const route = useRoute();
   const navigation = useNavigation();
-  const params = route.params as { date?: string } | undefined;
+  const params = route.params as { date?: string; mealType?: MealType } | undefined;
   
   const [selectedDate, setSelectedDate] = useState(
     params?.date || new Date().toISOString().split('T')[0]
+  );
+  const [selectedMealType, setSelectedMealType] = useState<MealType>(
+    params?.mealType || 'dinner'
   );
   const [menuName, setMenuName] = useState('');
   const [memo, setMemo] = useState('');
@@ -49,11 +58,14 @@ export default function DayScreen() {
     if (params?.date) {
       setSelectedDate(params.date);
     }
-  }, [params?.date]);
+    if (params?.mealType) {
+      setSelectedMealType(params.mealType);
+    }
+  }, [params?.date, params?.mealType]);
 
   useEffect(() => {
     loadMealData();
-  }, [selectedDate]);
+  }, [selectedDate, selectedMealType]);
 
   const loadMealData = async () => {
     setLoading(true);
@@ -65,7 +77,7 @@ export default function DayScreen() {
         params: { days: 60 }
       });
       const meal = mealsResponse.data.meals?.find(
-        (m: Meal) => m.meal_date === selectedDate
+        (m: Meal) => m.meal_date === selectedDate && m.meal_type === selectedMealType
       );
       
       if (meal) {
@@ -80,7 +92,7 @@ export default function DayScreen() {
 
       // コメント取得
       const commentsResponse = await api.get<CommentsResponse>('/comments', {
-        params: { date: selectedDate }
+        params: { date: selectedDate, meal_type: selectedMealType }
       });
       setComments(commentsResponse.data.comments || []);
     } catch (error) {
@@ -100,6 +112,7 @@ export default function DayScreen() {
       const api = await createApiClient();
       await api.post('/meals', {
         meal_date: selectedDate,
+        meal_type: selectedMealType,
         menu_name: menuName.trim(),
         memo: memo.trim() || null
       });
@@ -117,6 +130,7 @@ export default function DayScreen() {
       const api = await createApiClient();
       await api.post('/comments', {
         meal_date: selectedDate,
+        meal_type: selectedMealType,
         comment_text: commentText
       });
 
@@ -145,7 +159,7 @@ export default function DayScreen() {
             try {
               const api = await createApiClient();
               await api.delete('/meals', {
-                params: { date: selectedDate }
+                params: { date: selectedDate, meal_type: selectedMealType }
               });
 
               Alert.alert('成功', '献立を削除しました');
@@ -175,6 +189,32 @@ export default function DayScreen() {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>📅 日付</Text>
           <Text style={styles.dateDisplay}>{selectedDate}</Text>
+        </View>
+
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>🕐 食事の種類</Text>
+          <View style={styles.mealTypeContainer}>
+            {MEAL_TYPES.map((type) => (
+              <TouchableOpacity
+                key={type.value}
+                style={[
+                  styles.mealTypeButton,
+                  selectedMealType === type.value && styles.mealTypeButtonActive
+                ]}
+                onPress={() => setSelectedMealType(type.value)}
+              >
+                <Text style={styles.mealTypeEmoji}>{type.emoji}</Text>
+                <Text
+                  style={[
+                    styles.mealTypeText,
+                    selectedMealType === type.value && styles.mealTypeTextActive
+                  ]}
+                >
+                  {type.label}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
         </View>
 
         {existingMeal && (
@@ -282,6 +322,7 @@ const styles = StyleSheet.create({
   scrollView: {
     flex: 1,
     padding: 16,
+    paddingHorizontal: 16,
   },
   loadingContainer: {
     padding: 20,
@@ -319,6 +360,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#333',
     marginBottom: 12,
+    width: '100%',
   },
   dateDisplay: {
     fontSize: 20,
@@ -327,6 +369,38 @@ const styles = StyleSheet.create({
     padding: 16,
     backgroundColor: '#FFFFFF',
     borderRadius: 8,
+  },
+  mealTypeContainer: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  mealTypeButton: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    padding: 16,
+    borderWidth: 2,
+    borderColor: '#FFE0E0',
+  },
+  mealTypeButtonActive: {
+    backgroundColor: '#FFE0E0',
+    borderColor: '#FF6B6B',
+  },
+  mealTypeEmoji: {
+    fontSize: 24,
+    marginRight: 8,
+  },
+  mealTypeText: {
+    fontSize: 16,
+    color: '#666',
+    fontWeight: '600',
+  },
+  mealTypeTextActive: {
+    color: '#FF6B6B',
+    fontWeight: 'bold',
   },
   input: {
     backgroundColor: '#FFFFFF',

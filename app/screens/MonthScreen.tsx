@@ -11,10 +11,10 @@ import { Calendar } from 'react-native-calendars';
 import { useNavigation, useIsFocused } from '@react-navigation/native';
 import type { NavigationProp } from '@react-navigation/native';
 import { createApiClient } from '../config/api';
-import type { Meal } from '../types';
+import type { Meal, MealType } from '../types';
 
 type RootStackParamList = {
-  '日': { date: string };
+  '日': { date: string; mealType?: MealType };
 };
 
 interface MealsResponse {
@@ -23,7 +23,7 @@ interface MealsResponse {
 
 export default function MonthScreen() {
   const [markedDates, setMarkedDates] = useState<any>({});
-  const [mealsData, setMealsData] = useState<{ [key: string]: Meal }>({});
+  const [mealsData, setMealsData] = useState<{ [key: string]: Meal[] }>({});
   const [loading, setLoading] = useState(true);
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const isFocused = useIsFocused();
@@ -50,14 +50,20 @@ export default function MonthScreen() {
       
       const meals: Meal[] = response.data.meals || [];
       const marked: any = {};
-      const mealsMap: { [key: string]: Meal } = {};
+      const mealsMap: { [key: string]: Meal[] } = {};
       
       meals.forEach((meal) => {
         marked[meal.meal_date] = {
           selected: true,
           selectedColor: '#FF6B6B',
+          marked: true,
+          dotColor: '#FF6B6B',
         };
-        mealsMap[meal.meal_date] = meal;
+        
+        if (!mealsMap[meal.meal_date]) {
+          mealsMap[meal.meal_date] = [];
+        }
+        mealsMap[meal.meal_date].push(meal);
       });
       
       setMarkedDates(marked);
@@ -71,8 +77,10 @@ export default function MonthScreen() {
   };
 
   const onDayPress = (day: any) => {
-    // 日付をタップしたら直接日画面に遷移
-    navigation.navigate('日', { date: day.dateString });
+    // 日付をタップしたら、その日の献立がある場合は最初の meal_type で開く
+    const mealsForDay = mealsData[day.dateString];
+    const mealType = mealsForDay && mealsForDay.length > 0 ? mealsForDay[0].meal_type : 'dinner';
+    navigation.navigate('日', { date: day.dateString, mealType });
   };
 
   if (loading) {

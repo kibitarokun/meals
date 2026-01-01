@@ -76,7 +76,7 @@ export default function AIScreen() {
     <View style={styles.container}>
       <ScrollView style={styles.scrollView}>
         <View style={styles.header}>
-          <Text style={styles.headerTitle}>🤖 AIアシスタント</Text>
+          <Text style={styles.headerTitle}>🧚 AIアシスタント</Text>
           <Text style={styles.headerSubtitle}>
             献立の分析や提案をお手伝いします
           </Text>
@@ -143,10 +143,12 @@ const styles = StyleSheet.create({
   scrollView: {
     flex: 1,
     padding: 16,
+    paddingHorizontal: 16,
   },
   header: {
     marginBottom: 24,
     alignItems: 'center',
+    paddingHorizontal: 10,
   },
   headerTitle: {
     fontSize: 28,
@@ -158,6 +160,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#666',
     textAlign: 'center',
+    paddingHorizontal: 10,
+    width: '100%',
   },
   actionsContainer: {
     marginBottom: 24,
@@ -227,10 +231,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#333',
     lineHeight: 24,
+    width: '100%',
   },
   emptyContainer: {
     padding: 60,
+    paddingHorizontal: 40,
     alignItems: 'center',
+    width: '100%',
   },
   emptyText: {
     marginTop: 16,
@@ -238,5 +245,7 @@ const styles = StyleSheet.create({
     color: '#999',
     textAlign: 'center',
     lineHeight: 24,
+    paddingHorizontal: 10,
+    width: '100%',
   },
 });
