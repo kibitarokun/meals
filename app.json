@@ -18,6 +18,7 @@
         "backgroundColor": "#FFF8F0"
       }
     },
+    "entryPoint": "./index.js",
     "extra": {
       "eas": {
         "projectId": "93a9a58d-79b5-42f0-a8ec-89487959bd10"
