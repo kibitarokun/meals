@@ -7,7 +7,7 @@
 - **週画面**: 直近の献立とコメントの確認
 - **月画面**: カレンダーでの献立履歴の俯瞰
 - **日画面**: 献立の登録と家族間のコメント投稿
-- **AIコンシェルジュ**: 献立提案や履歴分析
+- **AIコンシェルジュ**: 自由な質問への回答、献立提案、履歴分析
 
 ## 🏗️ プロジェクト構造
 
@@ -20,8 +20,13 @@ expo_app/
 ├── backend/          # Cloudflare Workers
 │   ├── src/          # バックエンドソース
 │   └── migrations/   # D1データベースマイグレーション
-└── doc/              # 仕様書
+├── doc/              # 仕様書
+├── eas.json          # EAS Build設定
+├── app.json          # Expo設定
+└── index.js          # アプリエントリーポイント
 ```
+
+**現在のバージョン**: 1.1.0
 
 ## 🚀 セットアップ手順
 
@@ -44,7 +49,7 @@ npx wrangler d1 execute meals-db --remote --file=./migrations/001_create_tables.
 
 # 家族用の秘密鍵を設定
 npx wrangler secret put FAMILY_SECRET
-# → プロンプトで秘密鍵を入力（例: "ouchi2026"）
+# → プロンプトで秘密鍵を入力（"ouchi2026"）
 
 # デプロイ
 npm run deploy
@@ -55,9 +60,7 @@ npm run deploy
 ### 2. フロントエンドのセットアップ
 
 ```bash
-cd app
-
-# 依存パッケージのインストール
+# 依存パッケージのインストール（ルートディレクトリで実行）
 npm install
 
 # config/api.tsのAPI_BASE_URLを更新
@@ -66,12 +69,12 @@ npm install
 
 [app/config/api.ts](app/config/api.ts) を開き、`API_BASE_URL` をデプロイしたWorkerのURLに変更してください。
 
+**注意**: このプロジェクトは package.json がルートディレクトリにあるモノレポ構造です。
+
 ### 3. アプリの起動
 
 ```bash
-cd app
-
-# 開発サーバーの起動
+# 開発サーバーの起動（ルートディレクトリで実行）
 npm start
 
 # iOS シミュレータで起動
@@ -85,44 +88,61 @@ npm run android
 
 アプリを起動したら、バックエンドで設定した `FAMILY_SECRET` を入力してください。この値は端末に保存され、以降の通信で使用されます。
 
-## 📦 本番デプロイ（EAS Build）
+## 📦 本番デプロイ（EAS Build & Update）
+
+### 初回ビルド
 
 ```bash
-cd app
-
 # EASのインストール（初回のみ）
 npm install -g eas-cli
 
 # EASにログイン
 eas login
 
-# ビルド設定の初期化
-eas build:configure
+# Androidビルド（内部配布用APK）
+eas build --platform android --profile preview
 
-# Androidビルド
-eas build --platform android
+# プロダクションビルド
+eas build --platform android --profile production
 
 # iOSビルド（Appleアカウントが必要）
-eas build --platform ios
+eas build --platform ios --profile preview
 ```
 
 ビルド完了後、表示されるURLを家族に共有してインストールしてもらいます。
+
+### OTA更新（JavaScript変更のみ）
+
+ネイティブコードの変更がない場合、EAS Updateで即座に配信できます：
+
+```bash
+# previewビルドユーザー向けに更新配信
+npx eas update --branch preview --message "バグ修正"
+
+# productionビルドユーザー向けに更新配信
+npx eas update --branch production --message "新機能追加"
+```
+
+**自動更新**: アプリは起動時に自動的に更新をチェックして適用します（v1.1.0以降）。
 
 ## 🔧 開発コマンド
 
 ### バックエンド
 ```bash
 cd backend
-npm run dev      # ローカル開発サーバー起動
-npm run deploy   # 本番環境へデプロイ
+npx wrangler dev     # ローカル開発サーバー起動
+npm run deploy       # 本番環境へデプロイ
 ```
 
 ### フロントエンド
 ```bash
-cd app
-npm start        # Expo開発サーバー起動
-npm run ios      # iOSシミュレータで起動
-npm run android  # Androidエミュレータで起動
+# ルートディレクトリで実行
+npm start            # Expo開発サーバー起動
+npm run ios          # iOSシミュレータで起動
+npm run android      # Androidエミュレータで起動
+
+# OTA更新の配信
+npx eas update --branch preview --message "変更内容"
 ```
 
 ## 🎨 カラーテーマ
@@ -136,6 +156,10 @@ npm run android  # Androidエミュレータで起動
 
 ### 認証
 全てのリクエストに `X-API-KEY` ヘッダーが必要です。
+
+### データモデル
+献立は `(meal_date, meal_type)` の複合主キーで管理されます。
+- `meal_type`: `'breakfast'` | `'lunch'` | `'dinner'`
 
 ### エンドポイント
 
@@ -151,6 +175,7 @@ npm run android  # Androidエミュレータで起動
   "meals": [
     {
       "meal_date": "2025-12-29",
+      "meal_type": "dinner",
       "menu_name": "カレーライス",
       "memo": "辛口で作りました",
       "tags": "{\"cat\":\"洋食\",\"ing\":\"肉\"}",
@@ -167,13 +192,25 @@ npm run android  # Androidエミュレータで起動
 ```json
 {
   "meal_date": "2025-12-29",
+  "meal_type": "dinner",
   "menu_name": "カレーライス",
   "memo": "辛口で作りました"
 }
 ```
 
-#### GET /comments?date=YYYY-MM-DD
-特定日のコメント一覧を取得
+#### DELETE /meals
+献立を削除
+
+**リクエストボディ:**
+```json
+{
+  "meal_date": "2025-12-29",
+  "meal_type": "dinner"
+}
+```
+
+#### GET /comments?date=YYYY-MM-DD&meal_type=dinner
+特定献立のコメント一覧を取得
 
 #### POST /comments
 コメントを投稿
@@ -182,6 +219,7 @@ npm run android  # Androidエミュレータで起動
 ```json
 {
   "meal_date": "2025-12-29",
+  "meal_type": "dinner",
   "comment_text": "ごちそうさま！"
 }
 ```
@@ -189,11 +227,26 @@ npm run android  # Androidエミュレータで起動
 #### POST /ai
 AIコンシェルジュに相談
 
-**リクエストボディ:**
+**リクエストボディ（定型質問）:**
 ```json
 {
   "action": "suggest",  // "recent" | "suggest" | "popular"
-  "context": "optional context"
+  "context": {}
+}
+```
+
+**リクエストボディ（自由質問）:**
+```json
+{
+  "action": "chat",
+  "question": "今日は何を作ればいい？"
+}
+```
+
+**レスポンス:**
+```json
+{
+  "message": "AI からの回答テキスト"
 }
 ```
 
@@ -210,17 +263,11 @@ AIコンシェルジュに相談
 
 ## 🛠️ 技術スタック
 
-- **フロントエンド**: React Native (Expo)
+- **フロントエンド**: React Native (Expo SDK ~54.0.0)
 - **バックエンド**: Cloudflare Workers (TypeScript)
 - **データベース**: Cloudflare D1 (SQLite)
-- **AI**: Cloudflare Workers AI (Llama 3)
-- **認証**: API Key認証
-- **ストレージ**: Cloudflare R2 (Phase 2)
+- **AI**: Cloudflare Workers AI (@cf/meta/llama-3-8b-instruct)
+- **認証**: カスタムヘッダー認証 (X-API-KEY)
+- **配信**: EAS Build & EAS Update (OTA更新)
+- **ストレージ**: AsyncStorage (ローカル)
 
-## 📄 ライセンス
-
-Private - 家族専用アプリ
-
-## 👨‍👩‍👧‍👦 作者
-
-Tokiwa Tech - 家族の食卓をもっと楽しく

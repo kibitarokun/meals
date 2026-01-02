@@ -5,6 +5,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { StatusBar } from 'expo-status-bar';
 import { View, TextInput, Button, Text, StyleSheet, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import * as Updates from 'expo-updates';
 
 import MonthScreen from './screens/MonthScreen';
 import WeekScreen from './screens/WeekScreen';
@@ -22,7 +23,22 @@ export default function App() {
 
   React.useEffect(() => {
     checkApiKey();
+    checkForUpdates();
   }, []);
+
+  const checkForUpdates = async () => {
+    try {
+      if (!__DEV__) {
+        const update = await Updates.checkForUpdateAsync();
+        if (update.isAvailable) {
+          await Updates.fetchUpdateAsync();
+          await Updates.reloadAsync();
+        }
+      }
+    } catch (error) {
+      console.log('Update check failed:', error);
+    }
+  };
 
   const checkApiKey = async () => {
     const key = await getApiKey();
