@@ -158,5 +158,7 @@ const styles = StyleSheet.create({
     padding: 15,
     fontSize: 16,
     marginBottom: 20,
+    color: '#333',
+    backgroundColor: '#fff',
   },
 });
