@@ -13,6 +13,7 @@ export interface Meal {
   memo?: string;
   image_url?: string;
   tags?: string;
+  latest_comment?: string;
 }
 
 export interface Comment {

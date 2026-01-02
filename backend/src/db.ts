@@ -11,7 +11,13 @@ export async function getMeals(env: Env, days: number = 7): Promise<any[]> {
        LIMIT 1) as latest_comment
     FROM shared_meals m
     WHERE m.meal_date >= date('now', '-' || ? || ' days')
-    ORDER BY m.meal_date DESC, m.meal_type
+    ORDER BY m.meal_date DESC, 
+      CASE m.meal_type 
+        WHEN 'dinner' THEN 1 
+        WHEN 'lunch' THEN 2 
+        WHEN 'breakfast' THEN 3 
+        ELSE 4 
+      END
   `;
   
   const result = await env.DB.prepare(query).bind(days).all();
