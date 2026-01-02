@@ -47,7 +47,25 @@ export default function WeekScreen() {
       });
       console.log('API Response:', response.data);
       console.log('Meals count:', response.data.meals?.length);
-      setMeals(response.data.meals || []);
+      
+      // 食事タイプの順序を定義
+      const mealTypeOrder: Record<MealType, number> = {
+        breakfast: 0,
+        lunch: 1,
+        dinner: 2
+      };
+      
+      // 日付と食事タイプでソート
+      const sortedMeals = (response.data.meals || []).sort((a, b) => {
+        // まず日付で比較（降順：新しい日付が先）
+        if (a.meal_date !== b.meal_date) {
+          return b.meal_date.localeCompare(a.meal_date);
+        }
+        // 同じ日付なら meal_type で比較（昇順：朝食→昼食→夕食）
+        return mealTypeOrder[a.meal_type] - mealTypeOrder[b.meal_type];
+      });
+      
+      setMeals(sortedMeals);
     } catch (error) {
       Alert.alert('エラー', '献立の取得に失敗しました');
       console.error('Error loading meals:', error);
