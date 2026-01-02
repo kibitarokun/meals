@@ -19,6 +19,12 @@
       }
     },
     "entryPoint": "./index.js",
+    "updates": {
+      "url": "https://u.expo.dev/93a9a58d-79b5-42f0-a8ec-89487959bd10"
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
     "extra": {
       "eas": {
         "projectId": "93a9a58d-79b5-42f0-a8ec-89487959bd10"
