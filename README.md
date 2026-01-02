@@ -1,4 +1,4 @@
-# うちの晩ごはん - 家族共有献立管理アプリ
+# ミールみーる - 家族共有献立管理アプリ
 
 「迷わない・打たない・忘れない」3家族の献立共有アプリです。
 
@@ -49,7 +49,7 @@ npx wrangler d1 execute meals-db --remote --file=./migrations/001_create_tables.
 
 # 家族用の秘密鍵を設定
 npx wrangler secret put FAMILY_SECRET
-# → プロンプトで秘密鍵を入力（"ouchi2026"）
+# → プロンプトで秘密鍵を入力
 
 # デプロイ
 npm run deploy
