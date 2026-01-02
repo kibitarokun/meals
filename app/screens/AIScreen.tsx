@@ -2,11 +2,14 @@ import React, { useState } from 'react';
 import {
   View,
   Text,
+  TextInput,
   StyleSheet,
   ScrollView,
   TouchableOpacity,
   ActivityIndicator,
-  Alert
+  Alert,
+  KeyboardAvoidingView,
+  Platform
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { createApiClient } from '../config/api';
@@ -50,6 +53,7 @@ const AI_ACTIONS: AIAction[] = [
 export default function AIScreen() {
   const [response, setResponse] = useState<string>('');
   const [loading, setLoading] = useState(false);
+  const [question, setQuestion] = useState<string>('');
 
   const handleAIRequest = async (action: 'recent' | 'suggest' | 'popular') => {
     setLoading(true);
@@ -72,8 +76,39 @@ export default function AIScreen() {
     }
   };
 
+  const handleQuestionSubmit = async () => {
+    if (!question.trim()) {
+      Alert.alert('入力エラー', '質問を入力してください');
+      return;
+    }
+    
+    setLoading(true);
+    setResponse('');
+    
+    try {
+      const api = await createApiClient();
+      const result = await api.post('/ai', {
+        action: 'chat',
+        question: question.trim()
+      });
+      
+      setResponse((result.data as AIResponse).message || '応答がありませんでした');
+      setQuestion(''); // 送信後にクリア
+    } catch (error: any) {
+      console.error('AI question error:', error);
+      Alert.alert('エラー', '質問の送信に失敗しました');
+      setResponse('');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView 
+      style={styles.container}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={90}
+    >
       <ScrollView style={styles.scrollView}>
         <View style={styles.header}>
           <Text style={styles.headerTitle}>🧚 AIアシスタント</Text>
@@ -82,6 +117,35 @@ export default function AIScreen() {
           </Text>
         </View>
 
+        <View style={styles.questionSection}>
+          <Text style={styles.sectionTitle}>💬 自由に質問</Text>
+          <View style={styles.questionInputContainer}>
+            <TextInput
+              style={styles.questionInput}
+              placeholder="例: 今週は何を作ればいい？"
+              value={question}
+              onChangeText={setQuestion}
+              multiline
+              numberOfLines={2}
+              editable={!loading}
+            />
+            <TouchableOpacity
+              style={[styles.sendButton, loading && styles.sendButtonDisabled]}
+              onPress={handleQuestionSubmit}
+              disabled={loading}
+            >
+              <Ionicons name="send" size={24} color="#FFF" />
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        <View style={styles.divider}>
+          <View style={styles.dividerLine} />
+          <Text style={styles.dividerText}>または</Text>
+          <View style={styles.dividerLine} />
+        </View>
+
+        <Text style={styles.sectionTitle}>🎯 定型質問</Text>
         <View style={styles.actionsContainer}>
           {AI_ACTIONS.map((item) => (
             <TouchableOpacity
@@ -126,12 +190,12 @@ export default function AIScreen() {
           <View style={styles.emptyContainer}>
             <Ionicons name="hand-right" size={48} color="#CCC" />
             <Text style={styles.emptyText}>
-              上のボタンを押して{'\n'}AIに質問してみましょう
+              自由に質問するか、{'\n'}定型質問を選んでください
             </Text>
           </View>
         )}
       </ScrollView>
-    </View>
+    </KeyboardAvoidingView>
   );
 }
 
@@ -247,5 +311,62 @@ const styles = StyleSheet.create({
     lineHeight: 24,
     paddingHorizontal: 10,
     width: '100%',
+  },
+  questionSection: {
+    marginBottom: 24,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 12,
+    paddingHorizontal: 4,
+  },
+  questionInputContainer: {
+    flexDirection: 'row',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    padding: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  questionInput: {
+    flex: 1,
+    fontSize: 16,
+    color: '#333',
+    minHeight: 44,
+    maxHeight: 100,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+  },
+  sendButton: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: '#FF6B6B',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 8,
+  },
+  sendButtonDisabled: {
+    backgroundColor: '#CCC',
+  },
+  divider: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 20,
+  },
+  dividerLine: {
+    flex: 1,
+    height: 1,
+    backgroundColor: '#DDD',
+  },
+  dividerText: {
+    marginHorizontal: 16,
+    fontSize: 14,
+    color: '#999',
   },
 });

@@ -24,6 +24,7 @@ export interface Comment {
 }
 
 export interface AIRequest {
-  action: 'suggest' | 'recent' | 'popular';
+  action: 'suggest' | 'recent' | 'popular' | 'chat';
   context?: string;
+  question?: string;
 }

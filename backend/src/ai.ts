@@ -2,7 +2,7 @@ import { Env, AIRequest } from './types';
 import { getMeals } from './db';
 
 export async function handleAIRequest(env: Env, request: AIRequest): Promise<string> {
-  const { action, context } = request;
+  const { action, context, question } = request;
   
   try {
     switch (action) {
@@ -14,6 +14,12 @@ export async function handleAIRequest(env: Env, request: AIRequest): Promise<str
       
       case 'popular':
         return await getPopularMeals(env);
+      
+      case 'chat':
+        if (!question) {
+          return '質問内容を入力してください。';
+        }
+        return await handleChatQuestion(env, question);
       
       default:
         return 'どのようなご質問でしょうか？';
@@ -104,6 +110,34 @@ async function getPopularMeals(env: Env): Promise<string> {
   ).join('\n');
   
   return `📊 よく登場する献立トップ5:\n\n${popularList}`;
+}
+
+async function handleChatQuestion(env: Env, question: string): Promise<string> {
+  // 直近の献立データを取得してコンテキストとして提供
+  const meals = await getMeals(env, 30);
+  const recentMeals = meals.length > 0 
+    ? meals.slice(0, 10).map(m => `${m.meal_date} ${m.meal_type}: ${m.menu_name}`).join('\n')
+    : 'まだ献立の登録がありません';
+  
+  const systemPrompt = `あなたは日本の家庭料理に詳しい献立アドバイザーです。
+必ず日本語で、親しみやすく丁寧に回答してください。
+
+最近の献立履歴:
+${recentMeals}`;
+  
+  try {
+    const response = await env.AI.run('@cf/meta/llama-3-8b-instruct', {
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: question }
+      ]
+    });
+    
+    return response.response || 'すみません、回答を生成できませんでした。';
+  } catch (error) {
+    console.error('Chat question error:', error);
+    return '申し訳ございません。質問の処理中にエラーが発生しました。';
+  }
 }
 
 export async function generateTags(env: Env, menuName: string): Promise<string> {
