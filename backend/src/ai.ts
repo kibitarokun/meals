@@ -39,18 +39,17 @@ async function getRecentSummary(env: Env): Promise<string> {
   
   const mealList = meals.map(m => m.menu_name).join('、');
   
-  const prompt = `以下は過去2週間の献立リストです：${mealList}。
+  const prompt = `最近2週間の献立：${mealList}
 
-この献立の傾向を3～4文で簡潔に日本語で要約してください。
-栄養バランスや料理のジャンルに注目して分析してください。
-必ず日本語で回答すること。`;
+上記の献立傾向を150文字以内で分析してね。必ず文章を完結させること。日本語で回答すること。`;
   
   try {
     const response = await env.AI.run('@cf/meta/llama-3-8b-instruct', {
       messages: [
-        { role: 'system', content: 'You are a Japanese meal planning advisor. Always respond in Japanese language only. Be concise and friendly. あなたは日本語の献立アドバイザーです。必ず日本語のみで回答してください。' },
+        { role: 'system', content: 'あなたは日本の家庭料理に詳しい献立アドバイザーです。親しみやすい口調で、絵文字も使いながら、指定された文字数内で必ず文章を完結させてください。必ず日本語で回答してください。IMPORTANT: You must respond ONLY in Japanese language. 必ず日本語のみで回答すること。' },
         { role: 'user', content: prompt }
-      ]
+      ],
+      max_tokens: 256
     });
     
     return response.response || `最近は${meals.length}種類の献立を楽しまれていますね！`;
@@ -65,17 +64,16 @@ async function getSuggestions(env: Env): Promise<string> {
   
   const prompt = `最近の献立：${recentMeals || 'まだ献立がありません'}
 
-上記と被らない、冬の夕飯にふさわしい献立を3つ提案してください。
-各献立には簡単な説明を付けてください。
-番号付きリスト形式で日本語で回答してください。
-必ず日本語で回答すること。`;
+上記と被らない、今の季節におすすめの献立を3つ番号付きで教えてください。各献立に簡単な説明を付けてください。合計250文字程度で。日本語で回答すること。
+IMPORTANT: You must respond ONLY in Japanese language. 必ず日本語のみで回答すること。`;
   
   try {
     const response = await env.AI.run('@cf/meta/llama-3-8b-instruct', {
       messages: [
-        { role: 'system', content: 'You are a Japanese meal planning advisor. Always respond in Japanese language only. Suggest seasonal and nutritious meals. あなたは日本語の献立アドバイザーです。必ず日本語のみで回答してください。' },
+        { role: 'system', content: 'あなたは日本の家庭料理に詳しい献立アドバイザーです。親しみやすい口調で、番号付きリストで、指定された文字数内で必ず完結させて日本語で回答してください。IMPORTANT: You must respond ONLY in Japanese language. 必ず日本語のみで回答すること。' },
         { role: 'user', content: prompt }
-      ]
+      ],
+      max_tokens: 512
     });
     
     return response.response || '1. 鍋料理\n2. グラタン\n3. 豚汁定食';
@@ -119,8 +117,8 @@ async function handleChatQuestion(env: Env, question: string): Promise<string> {
     ? meals.slice(0, 10).map(m => `${m.meal_date} ${m.meal_type}: ${m.menu_name}`).join('\n')
     : 'まだ献立の登録がありません';
   
-  const systemPrompt = `あなたは日本の家庭料理に詳しい献立アドバイザーです。
-必ず日本語で、親しみやすく丁寧に回答してください。
+  const systemPrompt = `あなたは日本の家庭料理に詳しい献立アドバイザーです。親しみやすい口調で、絵文字も使いながら、300文字程度で必ず文章を完結させて日本語で回答してください。
+IMPORTANT: You must respond ONLY in Japanese language. 必ず日本語のみで回答すること。
 
 最近の献立履歴:
 ${recentMeals}`;
@@ -130,7 +128,8 @@ ${recentMeals}`;
       messages: [
         { role: 'system', content: systemPrompt },
         { role: 'user', content: question }
-      ]
+      ],
+      max_tokens: 600
     });
     
     return response.response || 'すみません、回答を生成できませんでした。';

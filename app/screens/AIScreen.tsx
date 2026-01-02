@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   View,
   Text,
@@ -54,6 +54,23 @@ export default function AIScreen() {
   const [response, setResponse] = useState<string>('');
   const [loading, setLoading] = useState(false);
   const [question, setQuestion] = useState<string>('');
+  const scrollViewRef = useRef<ScrollView>(null);
+  const responseViewRef = useRef<View>(null);
+
+  useEffect(() => {
+    if (response && !loading && responseViewRef.current) {
+      // 回答が表示されたら少し遅延してスクロール
+      setTimeout(() => {
+        responseViewRef.current?.measureLayout(
+          scrollViewRef.current as any,
+          (x, y) => {
+            scrollViewRef.current?.scrollTo({ y: y - 20, animated: true });
+          },
+          () => {}
+        );
+      }, 100);
+    }
+  }, [response, loading]);
 
   const handleAIRequest = async (action: 'recent' | 'suggest' | 'popular') => {
     setLoading(true);
@@ -109,7 +126,10 @@ export default function AIScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       keyboardVerticalOffset={90}
     >
-      <ScrollView style={styles.scrollView}>
+      <ScrollView 
+        ref={scrollViewRef}
+        style={styles.scrollView}
+      >
         <View style={styles.header}>
           <Text style={styles.headerTitle}>🧚 AIアシスタント</Text>
           <Text style={styles.headerSubtitle}>
@@ -122,7 +142,8 @@ export default function AIScreen() {
           <View style={styles.questionInputContainer}>
             <TextInput
               style={styles.questionInput}
-              placeholder="例: 今週は何を作ればいい？"
+              placeholder="例: 今日は何を作ればいい？"
+              placeholderTextColor="#999"
               value={question}
               onChangeText={setQuestion}
               multiline
@@ -177,7 +198,10 @@ export default function AIScreen() {
         )}
 
         {response && !loading && (
-          <View style={styles.responseContainer}>
+          <View 
+            ref={responseViewRef}
+            style={styles.responseContainer}
+          >
             <View style={styles.responseHeader}>
               <Ionicons name="chatbubble-ellipses" size={24} color="#4ECDC4" />
               <Text style={styles.responseHeaderText}>AIからの回答</Text>

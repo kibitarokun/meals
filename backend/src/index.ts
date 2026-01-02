@@ -1,6 +1,6 @@
 import { Env } from './types';
 import { authenticateRequest, corsHeaders, jsonResponse, errorResponse } from './auth';
-import { getMeals, getMealByDate, saveMeal, getComments, saveComment, deleteMeal } from './db';
+import { getMeals, saveMeal, getComments, saveComment, deleteMeal } from './db';
 import { handleAIRequest, generateTags } from './ai';
 
 export default {
