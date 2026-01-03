@@ -199,7 +199,7 @@ export default function AIScreen() {
         )}
         {response === '' && !loading && (
           <View style={styles.emptyContainer}>
-            <Ionicons name="hand-right" size={48} color="#CCC" />
+            {/* <Ionicons name="hand-right" size={48} color="#CCC" /> */}
             <Text style={styles.emptyText}>
               自由に質問するか、{"\n"}定型質問を選んでください
             </Text>

@@ -89,13 +89,19 @@ export default function App() {
         <Stack.Screen 
           name="日" 
           component={DayScreen}
-          options={{ 
+          options={({ navigation }) => ({ 
             headerShown: true,
             title: '献立の詳細',
             headerTitleStyle: { fontSize: 20, fontWeight: 'bold' },
-            headerBackTitle: '戻る',
-            headerBackTitleStyle: { fontSize: 16 }
-          }}
+            headerLeft: () => (
+              <Text
+                style={{ fontSize: 28, marginLeft: 10, color: '#007AFF' }}
+                onPress={() => navigation.goBack()}
+              >
+                ← 戻る
+              </Text>
+            )
+          })}
         />
       </Stack.Navigator>
     </NavigationContainer>
@@ -117,13 +123,9 @@ function TabNavigator() {
         component={WeekScreen}
         options={{ 
           title: '今週の献立',
-          tabBarIcon: ({ color, size }) => {
-            try {
-              return <Ionicons name="list" size={size} color={color} />;
-            } catch {
-              return <Text style={{ fontSize: size, color }}>📋</Text>;
-            }
-          },
+          tabBarIcon: ({ color, size }) => (
+            <Text style={{ fontSize: size, color }}>📋</Text>
+          ),
         }}
       />
       <Tab.Screen 
@@ -131,13 +133,9 @@ function TabNavigator() {
         component={MonthScreen}
         options={{ 
           title: 'カレンダー',
-          tabBarIcon: ({ color, size }) => {
-            try {
-              return <Ionicons name="calendar" size={size} color={color} />;
-            } catch {
-              return <Text style={{ fontSize: size, color }}>📅</Text>;
-            }
-          },
+          tabBarIcon: ({ color, size }) => (
+            <Text style={{ fontSize: size, color }}>📅</Text>
+          ),
         }}
       />
       <Tab.Screen 
@@ -145,13 +143,9 @@ function TabNavigator() {
         component={AIScreen}
         options={{ 
           title: 'AIアシスタント',
-          tabBarIcon: ({ color, size }) => {
-            try {
-              return <Ionicons name="sparkles" size={size} color={color} />;
-            } catch {
-              return <Text style={{ fontSize: size, color }}>✨</Text>;
-            }
-          },
+          tabBarIcon: ({ color, size }) => (
+            <Text style={{ fontSize: size, color }}>✨</Text>
+          ),
         }}
       />
     </Tab.Navigator>
