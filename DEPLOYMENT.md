@@ -24,14 +24,17 @@ npm run web:build
 2. **Pages** → **Create a project** → **Connect to Git**
 3. GitHubリポジトリを接続
 4. ビルド設定:
+   - **Framework preset**: `None`
    - **Build command**: `npm run web:build`
    - **Build output directory**: `dist`
-   - **Root directory**: `/` (leave blank)
-5. **Environment variables**に以下を設定（必要に応じて）:
+   - **Root directory**: `/` (空欄のままでOK)
+5. **Environment variables**:
    - なし（APIキーはユーザーがブラウザで入力）
 6. **Save and Deploy**
 
-#### オプション B: Wrangler CLI
+**重要**: デプロイ設定で「Custom deploy command」が設定されている場合は削除してください。Pagesは自動的にビルド出力をデプロイします。
+
+#### オプション B: Wrangler CLI（手動デプロイ）
 
 ```bash
 # Wranglerがインストールされていない場合
@@ -40,9 +43,14 @@ npm install -g wrangler
 # ログイン
 npx wrangler login
 
-# デプロイ
+# Pagesにデプロイ（Cloudflare Pagesとして）
 npx wrangler pages deploy dist --project-name=meals-app
+
+# または、既存のPages projectがある場合
+npx wrangler pages deploy dist
 ```
+
+**注意**: Wrangler CLIでデプロイする場合は、`wrangler pages deploy`を使用します（`wrangler deploy`ではありません）。
 
 ### 4. Web版の特徴
 
