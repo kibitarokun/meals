@@ -30,21 +30,21 @@ const AI_ACTIONS: AIAction[] = [
   {
     id: '1',
     title: '最近の献立を分析',
-    icon: 'analytics',
+    icon: '📊',
     description: '過去2週間の献立傾向を教えます',
     action: 'recent'
   },
   {
     id: '2',
     title: '献立を提案',
-    icon: 'bulb',
+    icon: '💡',
     description: '最近の献立と被らない提案をします',
     action: 'suggest'
   },
   {
     id: '3',
     title: '人気の献立',
-    icon: 'star',
+    icon: '⭐',
     description: 'よく作っている献立トップ5',
     action: 'popular'
   }
@@ -66,7 +66,7 @@ export default function AIScreen() {
           (x, y) => {
             scrollViewRef.current?.scrollTo({ y: y - 20, animated: true });
           },
-          () => {}
+          () => { }
         );
       }, 100);
     }
@@ -75,14 +75,14 @@ export default function AIScreen() {
   const handleAIRequest = async (action: 'recent' | 'suggest' | 'popular') => {
     setLoading(true);
     setResponse('');
-    
+
     try {
       const api = await createApiClient();
       const result = await api.post('/ai', {
         action,
         context: {}
       });
-      
+
       setResponse((result.data as AIResponse).message || '応答がありませんでした');
     } catch (error: any) {
       console.error('AI request error:', error);
@@ -98,17 +98,17 @@ export default function AIScreen() {
       Alert.alert('入力エラー', '質問を入力してください');
       return;
     }
-    
+
     setLoading(true);
     setResponse('');
-    
+
     try {
       const api = await createApiClient();
       const result = await api.post('/ai', {
         action: 'chat',
         question: question.trim()
       });
-      
+
       setResponse((result.data as AIResponse).message || '応答がありませんでした');
       setQuestion(''); // 送信後にクリア
     } catch (error: any) {
@@ -136,7 +136,6 @@ export default function AIScreen() {
             献立の分析や提案をお手伝いします
           </Text>
         </View>
-
         <View style={styles.questionSection}>
           <Text style={styles.sectionTitle}>💬 自由に質問</Text>
           <View style={styles.questionInputContainer}>
@@ -155,17 +154,15 @@ export default function AIScreen() {
               onPress={handleQuestionSubmit}
               disabled={loading}
             >
-              <Ionicons name="send" size={24} color="#FFF" />
+              <Text style={styles.sendButtonText}>➤</Text>
             </TouchableOpacity>
           </View>
         </View>
-
         <View style={styles.divider}>
           <View style={styles.dividerLine} />
           <Text style={styles.dividerText}>または</Text>
           <View style={styles.dividerLine} />
         </View>
-
         <Text style={styles.sectionTitle}>🎯 定型質問</Text>
         <View style={styles.actionsContainer}>
           {AI_ACTIONS.map((item) => (
@@ -176,11 +173,7 @@ export default function AIScreen() {
               disabled={loading}
             >
               <View style={styles.actionIconContainer}>
-                <Ionicons 
-                  name={item.icon as any} 
-                  size={32} 
-                  color="#FF6B6B" 
-                />
+                <Text style={styles.actionIcon}>{item.icon}</Text>
               </View>
               <View style={styles.actionTextContainer}>
                 <Text style={styles.actionTitle}>{item.title}</Text>
@@ -189,19 +182,14 @@ export default function AIScreen() {
             </TouchableOpacity>
           ))}
         </View>
-
         {loading && (
           <View style={styles.loadingContainer}>
             <ActivityIndicator size="large" color="#FF6B6B" />
             <Text style={styles.loadingText}>AIが考え中...</Text>
           </View>
         )}
-
-        {response && !loading && (
-          <View 
-            ref={responseViewRef}
-            style={styles.responseContainer}
-          >
+        {response !== '' && !loading && (
+          <View ref={responseViewRef} style={styles.responseContainer}>
             <View style={styles.responseHeader}>
               <Ionicons name="chatbubble-ellipses" size={24} color="#4ECDC4" />
               <Text style={styles.responseHeaderText}>AIからの回答</Text>
@@ -209,12 +197,11 @@ export default function AIScreen() {
             <Text style={styles.responseText}>{response}</Text>
           </View>
         )}
-
-        {!response && !loading && (
+        {response === '' && !loading && (
           <View style={styles.emptyContainer}>
             <Ionicons name="hand-right" size={48} color="#CCC" />
             <Text style={styles.emptyText}>
-              自由に質問するか、{'\n'}定型質問を選んでください
+              自由に質問するか、{"\n"}定型質問を選んでください
             </Text>
           </View>
         )}
@@ -274,6 +261,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 16,
+  },
+  actionIcon: {
+    fontSize: 32,
   },
   actionTextContainer: {
     flex: 1,
@@ -374,6 +364,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginLeft: 8,
+  },
+  sendButtonText: {
+    fontSize: 24,
+    color: '#FFF',
   },
   sendButtonDisabled: {
     backgroundColor: '#CCC',

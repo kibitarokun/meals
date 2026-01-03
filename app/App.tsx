@@ -92,7 +92,9 @@ export default function App() {
           options={{ 
             headerShown: true,
             title: '献立の詳細',
-            headerTitleStyle: { fontSize: 20, fontWeight: 'bold' }
+            headerTitleStyle: { fontSize: 20, fontWeight: 'bold' },
+            headerBackTitle: '戻る',
+            headerBackTitleStyle: { fontSize: 16 }
           }}
         />
       </Stack.Navigator>
@@ -115,9 +117,13 @@ function TabNavigator() {
         component={WeekScreen}
         options={{ 
           title: '今週の献立',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="list" size={size} color={color} />
-          ),
+          tabBarIcon: ({ color, size }) => {
+            try {
+              return <Ionicons name="list" size={size} color={color} />;
+            } catch {
+              return <Text style={{ fontSize: size, color }}>📋</Text>;
+            }
+          },
         }}
       />
       <Tab.Screen 
@@ -125,9 +131,13 @@ function TabNavigator() {
         component={MonthScreen}
         options={{ 
           title: 'カレンダー',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="calendar" size={size} color={color} />
-          ),
+          tabBarIcon: ({ color, size }) => {
+            try {
+              return <Ionicons name="calendar" size={size} color={color} />;
+            } catch {
+              return <Text style={{ fontSize: size, color }}>📅</Text>;
+            }
+          },
         }}
       />
       <Tab.Screen 
@@ -135,9 +145,13 @@ function TabNavigator() {
         component={AIScreen}
         options={{ 
           title: 'AIアシスタント',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="sparkles" size={size} color={color} />
-          ),
+          tabBarIcon: ({ color, size }) => {
+            try {
+              return <Ionicons name="sparkles" size={size} color={color} />;
+            } catch {
+              return <Text style={{ fontSize: size, color }}>✨</Text>;
+            }
+          },
         }}
       />
     </Tab.Navigator>
