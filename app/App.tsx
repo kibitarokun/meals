@@ -98,7 +98,7 @@ export default function App() {
                 style={{ fontSize: 28, marginLeft: 10, color: '#007AFF' }}
                 onPress={() => navigation.goBack()}
               >
-                ← 戻る
+                ←
               </Text>
             )
           })}
