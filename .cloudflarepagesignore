@@ -1,0 +1,3 @@
+# このディレクトリはCloudflare Pagesにデプロイされます
+# ビルドコマンド: npm run web:build
+# 出力ディレクトリ: dist

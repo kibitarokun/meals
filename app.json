@@ -18,6 +18,10 @@
         "backgroundColor": "#FFF8F0"
       }
     },
+    "web": {
+      "bundler": "metro",
+      "favicon": "./app/assets/favicon.png"
+    },
     "entryPoint": "./index.js",
     "updates": {
       "url": "https://u.expo.dev/93a9a58d-79b5-42f0-a8ec-89487959bd10"
