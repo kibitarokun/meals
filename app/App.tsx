@@ -92,10 +92,10 @@ export default function App() {
           options={({ navigation }) => ({ 
             headerShown: true,
             title: '献立の詳細',
-            headerTitleStyle: { fontSize: 20, fontWeight: 'bold' },
+            headerTitleStyle: { fontSize: 20, fontWeight: 'bold' as const },
             headerLeft: () => (
               <Text
-                style={{ fontSize: 28, marginLeft: 10, color: '#007AFF' }}
+                style={{ fontSize: 28, marginLeft: 10, color: '#000' }}
                 onPress={() => navigation.goBack()}
               >
                 ←
@@ -113,9 +113,9 @@ function TabNavigator() {
     <Tab.Navigator
       screenOptions={{
         tabBarStyle: { height: 70, paddingBottom: 10 },
-        tabBarLabelStyle: { fontSize: 16, fontWeight: 'bold' },
+        tabBarLabelStyle: { fontSize: 16, fontWeight: 'bold' as const },
         headerShown: true,
-        headerTitleStyle: { fontSize: 20, fontWeight: 'bold' }
+        headerTitleStyle: { fontSize: 20, fontWeight: 'bold' as const }
       }}
     >
       <Tab.Screen 
