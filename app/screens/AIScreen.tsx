@@ -30,21 +30,21 @@ const AI_ACTIONS: AIAction[] = [
   {
     id: '1',
     title: '最近の献立を分析',
-    icon: '📊',
+    icon: 'analytics',
     description: '過去2週間の献立傾向を教えます',
     action: 'recent'
   },
   {
     id: '2',
     title: '献立を提案',
-    icon: '💡',
+    icon: 'bulb',
     description: '最近の献立と被らない提案をします',
     action: 'suggest'
   },
   {
     id: '3',
     title: '人気の献立',
-    icon: '⭐',
+    icon: 'star',
     description: 'よく作っている献立トップ5',
     action: 'popular'
   }
@@ -131,13 +131,19 @@ export default function AIScreen() {
         style={styles.scrollView}
       >
         <View style={styles.header}>
-          <Text style={styles.headerTitle}>🧚 AIアシスタント</Text>
+          <View style={styles.headerTitleContainer}>
+            <Ionicons name="sparkles" size={28} color="#FF6B6B" style={styles.headerIcon} />
+            <Text style={styles.headerTitle}>AIアシスタント</Text>
+          </View>
           <Text style={styles.headerSubtitle}>
             献立の分析や提案をお手伝いします
           </Text>
         </View>
         <View style={styles.questionSection}>
-          <Text style={styles.sectionTitle}>💬 自由に質問</Text>
+          <View style={styles.sectionTitleContainer}>
+            <Ionicons name="chatbubbles" size={20} color="#FF6B6B" style={styles.sectionIcon} />
+            <Text style={styles.sectionTitle}>自由に質問</Text>
+          </View>
           <View style={styles.questionInputContainer}>
             <TextInput
               style={styles.questionInput}
@@ -154,7 +160,7 @@ export default function AIScreen() {
               onPress={handleQuestionSubmit}
               disabled={loading}
             >
-              <Text style={styles.sendButtonText}>➤</Text>
+              <Ionicons name="send" size={20} color="#fff" />
             </TouchableOpacity>
           </View>
         </View>
@@ -163,7 +169,10 @@ export default function AIScreen() {
           <Text style={styles.dividerText}>または</Text>
           <View style={styles.dividerLine} />
         </View>
-        <Text style={styles.sectionTitle}>🎯 定型質問</Text>
+        <View style={styles.sectionTitleContainer}>
+          <Ionicons name="options" size={20} color="#FF6B6B" style={styles.sectionIcon} />
+          <Text style={styles.sectionTitle}>定型質問</Text>
+        </View>
         <View style={styles.actionsContainer}>
           {AI_ACTIONS.map((item) => (
             <TouchableOpacity
@@ -173,7 +182,7 @@ export default function AIScreen() {
               disabled={loading}
             >
               <View style={styles.actionIconContainer}>
-                <Text style={styles.actionIcon}>{item.icon}</Text>
+                <Ionicons name={item.icon as any} size={28} color="#FF6B6B" />
               </View>
               <View style={styles.actionTextContainer}>
                 <Text style={styles.actionTitle}>{item.title}</Text>
@@ -224,11 +233,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 10,
   },
+  headerTitleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  headerIcon: {
+    marginRight: 8,
+  },
   headerTitle: {
     fontSize: 28,
     fontWeight: 'bold',
     color: '#333',
-    marginBottom: 8,
   },
   headerSubtitle: {
     fontSize: 16,
@@ -311,7 +327,8 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   emptyContainer: {
-    padding: 60,
+    paddingTop: 20,
+    paddingBottom: 60,
     paddingHorizontal: 40,
     alignItems: 'center',
     width: '100%',
@@ -328,12 +345,19 @@ const styles = StyleSheet.create({
   questionSection: {
     marginBottom: 24,
   },
+  sectionTitleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+    paddingHorizontal: 4,
+  },
+  sectionIcon: {
+    marginRight: 8,
+  },
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     color: '#333',
-    marginBottom: 12,
-    paddingHorizontal: 4,
   },
   questionInputContainer: {
     flexDirection: 'row',

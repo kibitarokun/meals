@@ -83,15 +83,6 @@ export default function WeekScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity 
-          style={styles.refreshButton} 
-          onPress={loadWeekMeals}
-        >
-          <Text style={styles.refreshText}>更新</Text>
-        </TouchableOpacity>
-      </View>
-      
       <ScrollView 
         style={styles.scrollView}
         contentContainerStyle={styles.scrollViewContent}
@@ -135,24 +126,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#FFF8F0',
   },
-  header: {
-    padding: 12,
-    alignItems: 'flex-end',
-    backgroundColor: '#FFF8F0',
-  },
-  refreshButton: {
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    backgroundColor: '#FF6B6B',
-    borderRadius: 20,
-    minWidth: 80,
-    alignItems: 'center',
-  },
-  refreshText: {
-    color: '#FFF',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
+
   scrollView: {
     flex: 1,
   },
