@@ -124,7 +124,11 @@ function TabNavigator() {
         options={{ 
           title: '今週の献立',
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="list" size={size} color={color} />
+            Platform.OS === 'web' ? (
+              <Text style={{ fontSize: size, color }}>📋</Text>
+            ) : (
+              <Ionicons name="list" size={size} color={color} />
+            )
           ),
         }}
       />
@@ -134,7 +138,11 @@ function TabNavigator() {
         options={{ 
           title: 'カレンダー',
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="calendar" size={size} color={color} />
+            Platform.OS === 'web' ? (
+              <Text style={{ fontSize: size, color }}>📅</Text>
+            ) : (
+              <Ionicons name="calendar" size={size} color={color} />
+            )
           ),
         }}
       />
@@ -144,7 +152,11 @@ function TabNavigator() {
         options={{ 
           title: 'AIアシスタント',
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="sparkles" size={size} color={color} />
+            Platform.OS === 'web' ? (
+              <Text style={{ fontSize: size, color }}>✨</Text>
+            ) : (
+              <Ionicons name="sparkles" size={size} color={color} />
+            )
           ),
         }}
       />

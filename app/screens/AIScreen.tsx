@@ -132,7 +132,11 @@ export default function AIScreen() {
       >
         <View style={styles.header}>
           <View style={styles.headerTitleContainer}>
-            <Ionicons name="sparkles" size={28} color="#FF6B6B" style={styles.headerIcon} />
+            {Platform.OS === 'web' ? (
+              <Text style={[styles.headerIcon, { fontSize: 28, color: '#FF6B6B' }]}>🧚</Text>
+            ) : (
+              <Ionicons name="sparkles" size={28} color="#FF6B6B" style={styles.headerIcon} />
+            )}
             <Text style={styles.headerTitle}>AIアシスタント</Text>
           </View>
           <Text style={styles.headerSubtitle}>
@@ -141,7 +145,11 @@ export default function AIScreen() {
         </View>
         <View style={styles.questionSection}>
           <View style={styles.sectionTitleContainer}>
-            <Ionicons name="chatbubbles" size={20} color="#FF6B6B" style={styles.sectionIcon} />
+            {Platform.OS === 'web' ? (
+              <Text style={[styles.sectionIcon, { fontSize: 20 }]}>💬</Text>
+            ) : (
+              <Ionicons name="chatbubbles" size={20} color="#FF6B6B" style={styles.sectionIcon} />
+            )}
             <Text style={styles.sectionTitle}>自由に質問</Text>
           </View>
           <View style={styles.questionInputContainer}>
@@ -160,7 +168,11 @@ export default function AIScreen() {
               onPress={handleQuestionSubmit}
               disabled={loading}
             >
-              <Ionicons name="send" size={20} color="#fff" />
+              {Platform.OS === 'web' ? (
+                <Text style={styles.sendButtonText}>➤</Text>
+              ) : (
+                <Ionicons name="send" size={20} color="#fff" />
+              )}
             </TouchableOpacity>
           </View>
         </View>
@@ -170,7 +182,11 @@ export default function AIScreen() {
           <View style={styles.dividerLine} />
         </View>
         <View style={styles.sectionTitleContainer}>
-          <Ionicons name="options" size={20} color="#FF6B6B" style={styles.sectionIcon} />
+          {Platform.OS === 'web' ? (
+            <Text style={[styles.sectionIcon, { fontSize: 20 }]}>🎯</Text>
+          ) : (
+            <Ionicons name="options" size={20} color="#FF6B6B" style={styles.sectionIcon} />
+          )}
           <Text style={styles.sectionTitle}>定型質問</Text>
         </View>
         <View style={styles.actionsContainer}>
@@ -182,7 +198,11 @@ export default function AIScreen() {
               disabled={loading}
             >
               <View style={styles.actionIconContainer}>
-                <Ionicons name={item.icon as any} size={28} color="#FF6B6B" />
+                {Platform.OS === 'web' ? (
+                  <Text style={styles.actionIcon}>{item.icon === 'analytics' ? '📊' : item.icon === 'bulb' ? '💡' : '⭐'}</Text>
+                ) : (
+                  <Ionicons name={item.icon as any} size={28} color="#FF6B6B" />
+                )}
               </View>
               <View style={styles.actionTextContainer}>
                 <Text style={styles.actionTitle}>{item.title}</Text>
