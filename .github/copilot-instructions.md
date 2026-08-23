@@ -14,7 +14,7 @@ Family meal planning app with Expo/React Native frontend and Cloudflare Workers 
 1. **Authentication**: Custom header-based auth using `X-API-KEY` with `FAMILY_SECRET` stored in AsyncStorage ([app/config/api.ts](app/config/api.ts))
 2. **API Client**: Axios client created via `createApiClient()` - automatically includes stored API key
 3. **Database**: Cloudflare D1 (SQLite) with composite primary keys `(meal_date, meal_type)`
-4. **AI**: Cloudflare Workers AI (`@cf/meta/llama-3-8b-instruct`) for meal suggestions and analysis
+4. **AI**: Cloudflare Workers AI for meal suggestions and analysis. Models are listed in `TEXT_MODELS` in [backend/src/ai.ts](backend/src/ai.ts) and tried in order (currently `@cf/meta/llama-3.1-8b-instruct-fast`, falling back to `@cf/meta/llama-3.3-70b-instruct-fp8-fast`). Cloudflare deprecates models periodically, so update that array rather than hardcoding a model at each call site.
 
 ### Data Flow
 - Frontend → `createApiClient()` → Cloudflare Worker → D1 Database
