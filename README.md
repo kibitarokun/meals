@@ -266,7 +266,7 @@ AIコンシェルジュに相談
 - **フロントエンド**: React Native (Expo SDK ~54.0.0)
 - **バックエンド**: Cloudflare Workers (TypeScript)
 - **データベース**: Cloudflare D1 (SQLite)
-- **AI**: Cloudflare Workers AI (@cf/meta/llama-3-8b-instruct)
+- **AI**: Cloudflare Workers AI (@cf/meta/llama-3.1-8b-instruct-fast)
 - **認証**: カスタムヘッダー認証 (X-API-KEY)
 - **配信**: EAS Build & EAS Update (OTA更新)
 - **ストレージ**: AsyncStorage (ローカル)
